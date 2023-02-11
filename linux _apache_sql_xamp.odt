@@ -1,0 +1,390 @@
+
+    <?php
+/*
+'''
+###### LINUX ##################
+
+
+     Usuario ROOT
+    
+       sudo -i
+
+Instalar programas 
+
+sudo apt-get install mysql  mysql-server mysql-client 
+////////////
+
+
+Borrar Programa
+
+sudo apt-get --purge remove 
+
+
+pt purge es semejante a apt remove salvo que el primero elimina ciertos archivos de configuración y no el segundo (que los deja intactos).
+
+apt autoremove elimina los paquetes que fueron instalados para satisfacer las dependencias de otros paquetes pero que ahora ya no son requeridos.
+
+apt autoclean limpia el repositorio local de archivos de paquetes recuperados que ya no van a ser utilizados.
+
+apt dist-upgrade actualiza y maneja "inteligentemente" las dependencias cambiantes con nuevas versiones de paquetes.
+
+
+sudo apt autoremove 
+
+sudo apt autoclean 
+
+
+Elimiar archivos y/o directorios
+
+rm - /gfg/ggfdg/
+
+
+Listar  ls 
+
+ ls /var/www/html/index.html
+
+ ls /etc/apache2/sites-enabled/
+
+
+
+Ver arbol de direcciones
+ 
+ tree /var/www/
+
+
+Acceder cd
+
+Copiar
+ cp /etc/apache2/apache2.conf /etc/ap
+
+
+Crear carpeta
+
+ mkdir /var/www/web1/
+
+
+Crear archivo
+
+ touch /var/www/web1/index.html
+
+
+Editar archivo
+
+ nano /var/www/web1/index.html
+
+ nano /etc/apache2/sites-available/web1.conf
+
+
+Borrar comentarios
+
+ :g/^\S*#/d
+
+Borrar espacios vacios
+
+ :g/^$/d
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+APACHE 2 ///////////////////////////////////////////////////////
+
+/////////////
+
+
+https://www.youtube.com/watch?v=8EnTdCwaX48
+
+
+
+Reiniciar
+
+ service apache2 restart
+
+
+Recargar 
+
+ service apache2 reload
+
+
+Ver estado
+
+  ufw app list
+  
+  service apache2 status
+
+  ufw app info "Apache full"
+
+Test configuracion
+
+ sudo apache2ctl configtest
+
+Configuracion
+
+ ifconfig
+
+ touch apache2 args/web1.conf
+
+ apachectl -S
+
+
+Archivo configuracion Host virtual
+
+  etc/apache2/sites-available/web1.conf
+
+
+Activar configuracion en servidor
+
+   a2ensite web1.conf
+
+   a2dissite 000-default.conf
+
+   service apache2 reload
+
+
+Añadir dominios en archivo hosts
+
+
+ nano /etc/hosts/
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SERVIDOR VIRTUAL POR NOMBRE
+////////////////////////////
+
+ Crear carpeta en /var/www/ 
+ Crear archivo html en la carpeta creada
+ Crear archivo configuracion en etc/apache2/sites-available/
+ Activar configuracion en servidor a2ensite web1.conf y recargar apache    service apache2 reload
+ Añadir dominios en archivo hosts nano /etc/hosts/
+
+
+//////////////////////////////////////////////////////////
+
+SERVIDOR VIRTUAL POR SERVIDOR
+
+
+Ver puertos abiertos
+
+ netstat -tuna
+
+Crear carpeta en /var/www/ 
+Crear archivo html en la carpeta creada
+Crear archivo configuracion en etc/apache2/sites-available/  /*EJ*/
+Habilitar puerto etc/apache2/ports.conf Listen :8081
+Activar configuracion en servidor a2ensite
+service apache2 reload
+
+////////////////////////////////////////////////////////////
+
+SERVIDOR VIRTUAL POR IP ////////////////////////////
+
+////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+
+Configuracion virtualhost   ///////////////////////
+
+/////////////////////////////////////////
+
+<VirtualHost *:80>
+  ServerName your_domain
+  ServerAlias www.your_domain
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/your_domain
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+
+///////////////////////////////////////////////////////
+
+Firewall   ////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+
+Configurar y habilitar UFW
+
+Una vez instalado y configurado el firewall, explicaremos la sintaxis básica para empezar a establecer reglas.
+
+1. Definición del comportamiento por defecto
+
+En primer lugar deberemos determinar si queremos que UFW, por defecto, permita o deniegue el tráfico entrante y el tráfico saliente.
+
+Esto lo podemos lograr del siguiente modo: ufw default deny incoming //Deniega conexiones entrantes que no coincidan con ninguna regla.
+
+ufw default allow incoming // Permite conexiones entrantes que no coincidan con ninguna regla.
+
+Para conexiones salientes: ufw default deny outgoing //Deniega conexiones salientes que no coincidan con ninguna regla.
+
+ufw default allow outgoing //Permite conexiones salientes que no coincidan con ninguna regla.
+
+Nuestra recomendación es denegar las conexiones entrantes y permitir las conexiones salientes para una configuración básica. Después, deberás crear reglas para permitir el acceso de aquellas conexiones, protocolos o equipos que consideres oportuno.
+
+2. Ver la configuración actual del firewall
+
+Ahora que ya has creado tu primera regla, podrás ver la configuración actual con el siguiente comando:
+
+ufw status
+
+3. Permitir las conexiones SSH (¡IMPORTANTE!)
+
+Para evitar que quedes excluido de tu propio servidor una vez habilites el firewall, es importante que creas una regla que te permita conectarte a través del puerto 22 (o cualquiera que hayas designado para el servicio SSH).
+
+Puedes crear tu primera regla para permitir tráfico entrante de la siguiente manera:
+
+ufw allow 22
+
+Por supuesto, deberás especificar el puerto que el servicio utiliza.
+
+4. Permitir otras conexiones entrantes según protocolo, IP de origen y otros parámetros
+
+A continuación te exponemos varios ejemplos que te demostrarán cuál es la sintaxis de UFW, pudiendo adaptar cada uno de ellas según tus necesidades.
+
+ufw allow 80 // Permite las conexiones entrantes por el puerto 80.
+
+ufw allow http // Permite las conexiones entrantes por el puerto 80, utilizando el alias "http" en vez del puerto numérico.
+
+ufw allow 80/tcp // Permite solo las conexiones entrantes con el protocolo TCP por el puerto 80.
+
+ufw allow 1000-2000 // Permite las conexiones entrantes en un rango de puertos.
+
+ufw allow from 10.0.0.30 // Permite conexiones entrantes a cualquier puerto y protocolo a la IP 10.0.0.30.
+
+ufw allow from 10.0.0.0/24 // Permite conexiones entrantes a cualquier puerto y protocolo desde un rango de IPs usando la notación CIDR (de 10.0.0.0 a 10.0.0.255 en este caso).
+
+ufw allow from 10.0.0.30 to any port 22 // Permite las conexiones entrantes al puerto 22 a la IP 10.0.0.30.
+
+ufw allow from 10.0.0.30 to any port 22 proto tcp // Permite las conexiones entrantes al puerto 22, con protocolo TCP a la IP 10.0.0.30.
+
+Esta es solo una muestra de las incontables combinaciones que permite UFW. Por supuesto, recuerda que también puedes utilizar deny para lograr el efecto contrario.
+
+5. Eliminar reglas
+
+Para eliminar una regla, conviene primero mostrarlas de forma numerada. Puedes lograrlo con el siguiente comando:
+
+ufw status numbered
+
+Una vez se muestran las reglas precedidas por un número que las identifique, podrás eliminarlas del siguiente modo:
+
+ufw delete 3 // Eliminar la regla número "3".
+
+6. Insertar reglas con un número específico
+
+Puedes utilizar la siguiente sintaxis para especificar reglas en un lugar específico, consiguiendo que esa regla tenga prioridad sobre las que le suceden.
+
+ufw insert 3 allow 22 //Inserta una regla para permitir las conexiones entrantes en la posición 3.
+
+7. Activar o desactivar los registros
+
+UFW tiene la opción de registrar todas las acciones que toma y todos los intentos de acceso. Puedes activar o desactivar el registro de UFW del siguiente modo:
+
+ufw logging on // Habilita los registros.
+
+ufw logging off // Deshabilita los registros.
+
+8. Activar / Desactivar el firewall
+
+Finalmente, te mostraremos cómo activar el firewall una vez hayas establecido la configuración necesaria para tu servidor:
+
+ufw enable // Activa el firewall y pone en funcionamiento todas las reglas establecidas.
+
+ufw disable // Deshabilita (pausa) el firewall.
+
+ufw reset // Elimina todas las reglas y te permite comenzar desde cero a excepción del comportamiento por defecto que definiste en el paso 1.
+
+
+
+////////////////////////////////////////////////////////////
+
+MYSQL   //////////////////////////////////////////////
+
+////////////////////////////////////////////////
+
+mysql -u root -p
+
+service mysql start	
+
+show databases;
+
+CONSULTAS
+
+SELECT user,authemtication_string,plugin,host FROM mysql.user;
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY'duty10460duty10460xboxGAMER+++';
+
+CREATE DATABASE
+
+CREATE USER 'example_user'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+
+GRANT ALL ON example_database.* TO 'example_user'@'%';
+
+SHOW DATABASES;
+
+FLUSH PRIVILEGES  Actualizar privilegios
+
+otros:
+
+mysql_install_db -u mysql  Instalar nueva Base de datos
+
+Systemctl unmask mysql.service Desenmascarar 
+
+rm -r /var/lib/mysql*	Eliminar configuracion de bases de datos antiguas
+
+systemctl status mariadb
+systemctl status mysql
+
+mysql_secure_installation
+
+/etc/init.d/mysql stop
+apt-get remove --purge mariadb*
+apt-get autoremove
+apt-get autoclean
+rm -rf /etc/mysql
+rm -rf /var/lib/mysql*
+
+
+
+
+
+////////////////////////////////////////////////
+
+XAMPP   //////////////////
+
+///////////////////////////////////////////
+
+/opt/lampp/lampp start
+
+/opt/lampp/bin/mysql-u root -p 
+
+/opt/lampp/htdocs/www/
+
+
+
+
+*/
+'''
+
+
+
+
+
+
+
+
+?>
+</body>
+</html>
